@@ -1,105 +1,113 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-
 {% block content %}
-    <div class="container">
-        <h1 class="mt-4 mb-3 text-center">The Hourglass</h1>
-        <div class="text-center mb-3">
-            {% if user.is_authenticated %}
-                <a href="{% url 'account_logout' %}" class="btn btn-sm btn-primary">Logout</a>
-            {% else %}
-                <a href="{% url 'account_login' %}" class="btn btn-sm btn-primary">Login</a>
-            {% endif %}
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6 mt-4">
-                <h2>To-Do</h2>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th><a href="?sort=due_date">Due Date</a></th>
-                            <th><a href="?sort=title">Title</a></th>
-                            <th><a href="?sort=status">Status</a></th>
-                            <th>Category</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for task in tasks %}
-                        {% if task.status != 'completed' %}
-                        <tr>
-                            <td>{{ task.due_date }}</td>
-                            <td>{{ task.title }}</td>
-                            <td>{{ task.status }}</td>
-                            <td>{{ task.category.name }}</td>
-                            <td>
-                                <a href="{% url 'task_edit' task.pk %}" class="btn btn-sm btn-primary">Edit</a>
-                                <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-danger">Delete</a>
-                                <form action="{% url 'task_complete' task.pk %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-success">Complete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <div style="text-align: center; margin-top: 16px;">
-                    <form action="{% url 'task_create' %}" method="get" style="display: inline;">
-                        <button type="submit" style="background: none; border: none; padding: 0;">
-                            <img src="{% static 'create_icon.png' %}" alt="Create Task" style="width: 48px; height: 48px;">
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 mt-4">
-                <h2>Completed</h2>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Due Date</th>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Category</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for task in tasks %}
-                        {% if task.status == 'completed' %}
-                        <tr>
-                            <td>{{ task.due_date }}</td>
-                            <td>{{ task.title }}</td>
-                            <td>{{ task.status }}</td>
-                            <td>{{ task.category.name }}</td>
-                            <td>
-                                <a href="{% url 'task_edit' task.pk %}" class="btn btn-sm btn-primary">Edit</a>
-                                <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div class="container">
+
+  <!-- Responsive header with login/logout -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 mb-3">
+    <h1 class="h3 text-center text-md-start mb-2 mb-md-0">The Hourglass</h1>
+    <div class="text-center text-md-end">
+      {% if user.is_authenticated %}
+        <a href="{% url 'account_logout' %}" class="btn btn-sm btn-primary">Logout</a>
+      {% else %}
+        <a href="{% url 'account_login' %}" class="btn btn-sm btn-primary">Login</a>
+      {% endif %}
     </div>
-    <style>
-    @media (max-width: 768px) {
-        .row {
-            display: block;
-        }
-        .col-md-6 {
-            width: 100%;
-            max-width: 100%;
-        }
-    }
-    </style>
+  </div>
 
-    <!-- bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+  <!-- Tables: stack on mobile, side-by-side on md+ -->
+  <div class="row g-4 equalize">
+    <div class="col-12 col-lg-6 d-flex">
+      <div class="panel flex-fill d-flex flex-column">
+        <!-- To-Do -->
+        <h2>To-Do</h2>
+        <div class="table-responsive flex-grow-1">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th><a href="?sort=due_date">Due Date</a></th>
+                <th><a href="?sort=title">Title</a></th>
+                <th><a href="?sort=status">Status</a></th>
+                <th>Category</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for task in tasks %}
+              {% if task.status != 'completed' %}
+              <tr>
+                <td>{{ task.due_date }}</td>
+                <td>{{ task.title }}</td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.category.name }}</td>
+                <td>
+                  <a href="{% url 'task_edit' task.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                  <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                  <form action="{% url 'task_complete' task.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success">Complete</button>
+                  </form>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <!-- Centered Add icon -->
+        <div class="text-center mt-3">
+          <a href="{% url 'task_create' %}" aria-label="Create task" class="d-inline-block">
+            <img src="{% static 'image/Add_icon.webp' %}" alt="Create Task" class="img-fluid mx-auto d-block" style="max-width:64px;height:auto;">
+          </a>
+        </div>
+      </div>
+    </div>
 
+    <div class="col-12 col-lg-6 d-flex">
+      <div class="panel flex-fill d-flex flex-column">
+        <!-- Completed -->
+        <h2>Completed</h2>
+        <div class="table-responsive flex-grow-1">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Due Date</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for task in tasks %}
+              {% if task.status == 'completed' %}
+              <tr>
+                <td>{{ task.due_date }}</td>
+                <td>{{ task.title }}</td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.category.name }}</td>
+                <td>
+                  <a href="{% url 'task_edit' task.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                  <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  /* Equalize heights only on >= 992px; below that, columns stack */
+  @media (min-width: 992px) {
+    .equalize > [class*="col-"] { display: flex; }
+    .equalize .panel { display: flex; flex-direction: column; width: 100%; }
+    .equalize .panel .table-responsive { flex: 1 1 auto; }
+  }
+</style>
 {% endblock %}
