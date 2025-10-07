@@ -76,7 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'allauth.socialaccount.context_processors.socialaccount',  # <-- Only this one for AllAuth
+                # REMOVE any allauth context processors here!
             ],
         },
     },
