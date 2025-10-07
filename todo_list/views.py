@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Task, Category
 from .forms import TaskForm
 
@@ -39,5 +39,8 @@ def task_delete(request, pk):
         return redirect('task_list')
     return render(request, 'task_confirm_delete.html', {'task': task})
 
+def tasks_by_category(request, category_name):
+    tasks = Task.objects.filter(user=request.user, category__name=category_name)
+    return render(request, 'task_list.html', {'tasks': tasks, 'selected_category': category_name})
 
 
