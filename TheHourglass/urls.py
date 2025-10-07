@@ -18,11 +18,8 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path
 from todo_list import views as todo_list_views
-def home(request):
-    return HttpResponse("Hello, To-do list")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello/', todo_list_views.hello_todo_list, name='hello_todo_list'),
-    path('', home, name='home'),
+    path('', todo_list_views.main_page, name='main'),
 ]
