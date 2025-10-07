@@ -24,7 +24,48 @@
         </div>
 
         <!-- Columns for to-do and done go here -->
-
+    <div class="row">
+        <div class="col-12 col-md-6 mt-4">
+            <h2>To-Do</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <a href="?sort=due_date">Due Date</a>
+                        </th>
+                        <th>
+                            <a href="?sort=title">Title</a>
+                        </th>
+                        <th>
+                            <a href="?sort=status">Status</a>
+                        </th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    {% if task.status == 'pending' %}
+                    <tr>
+                        <td>{{ task.due_date }}</td>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.status }}</td>
+                        <td>{{ task.category.name }}</td>
+                        <td>
+                            <a href="{% url 'task_edit' task.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                            <form action="{% url 'task_complete' task.pk %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success">Complete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
     </div>
 
     <!-- bootstrap -->
