@@ -45,7 +45,6 @@
                 </thead>
                 <tbody>
                     {% for task in tasks %}
-                    {% if task.status == 'pending' %}
                     <tr>
                         <td>{{ task.due_date }}</td>
                         <td>{{ task.title }}</td>
@@ -60,13 +59,16 @@
                             </form>
                         </td>
                     </tr>
-                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
+            <form action="{% url 'task_create' %}" method="get" style="margin-top: 16px;">
+                <button type="submit" class="btn btn-sm btn-success">Create Task</button>
+            </form>
         </div>
     </div>
-    <a href="{% url 'account_login' %}">Sign In</a>
+    <a href="{% url 'account_login' %}" class="btn btn-sm btn-primary">Sign In</a>
+    <a href="{% url 'account_logout' %}" class="btn btn-danger">Logout</a>
     </div>
 
     <!-- bootstrap -->

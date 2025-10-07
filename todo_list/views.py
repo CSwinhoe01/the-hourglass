@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from .models import Task, Category
 from .forms import TaskForm
 
+@login_required
 def main_page(request):
-    return render(request, 'index.html')
+    tasks = Task.objects.filter(user=request.user)
+    return render(request, 'index.html', {'tasks': tasks})
 
 def task_list(request):
     sort_by = request.GET.get('sort', 'due_date')  # Default sort
@@ -46,5 +50,12 @@ def task_delete(request, pk):
 def tasks_by_category(request, category_name):
     tasks = Task.objects.filter(user=request.user, category__name=category_name)
     return render(request, 'task_list.html', {'tasks': tasks, 'selected_category': category_name})
+
+@require_POST
+def task_complete(request, pk):
+    task = get_object_or_404(Task, pk=pk, user=request.user)
+    task.status = 'completed'
+    task.save()
+    return redirect('main')
 
 
