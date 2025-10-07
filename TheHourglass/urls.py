@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', todo_list_views.main_page, name='main'),
     path("accounts/", include("allauth.urls")),
+    path('', include('todo_list.urls')),
 ]
