@@ -17,20 +17,63 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<!-- custom styles -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
-  <!-- Your styles (after Bootstrap so you can override) -->
-  <link rel="stylesheet" href="{% static 'todo_list/style.css' %}"> <!-- update path if you moved it -->
 </head>
 <body>
   <div class="container">
     {% block content %}{% endblock %}
   </div>
 
-  <!-- Bootstrap JS (optional) -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
+  <!-- Top-right toast container -->
+  <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;"></div>
+
+  <!-- Bootstrap JS bundle (required for modals/toasts) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossorigin="anonymous"></script>
+
+  <script>
+    // De-dupe toasts per page load
+    const _shownToasts = new Set();
+
+    window.showToast = function (msg, level) {
+      const levelMap = { error: 'danger', success: 'success', info: 'info', warning: 'warning', debug: 'secondary' };
+      const bsLevel = levelMap[level] || 'info';
+      const key = bsLevel + '|' + msg;
+      if (_shownToasts.has(key)) return;
+      _shownToasts.add(key);
+
+      const container = document.getElementById('toast-container');
+      if (!container || !window.bootstrap || !bootstrap.Toast) { console.warn('Toast fallback:', msg); return; }
+
+      const el = document.createElement('div');
+      el.className = 'toast align-items-center text-bg-' + bsLevel + ' border-0';
+      el.setAttribute('role', 'alert');
+      el.setAttribute('aria-live', 'assertive');
+      el.setAttribute('aria-atomic', 'true');
+      el.dataset.bsDelay = '3500';
+      el.innerHTML =
+        '<div class="d-flex">' +
+          '<div class="toast-body">' + msg + '</div>' +
+          '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
+        '</div>';
+      container.appendChild(el);
+      const t = new bootstrap.Toast(el);
+      el.addEventListener('hidden.bs.toast', function(){ el.remove(); });
+      t.show();
+    };
+
+    // Auto-show Django messages as toasts
+    {% if messages %}
+    document.addEventListener('DOMContentLoaded', function () {
+      {% for message in messages %}
+      (function () {
+        var msg = "{{ message|escapejs }}";
+        var level = "{{ message.tags|default:'info' }}";
+        showToast(msg, level);
+      })();
+      {% endfor %}
+    });
+    {% endif %}
+  </script>
 </body>
 </html>

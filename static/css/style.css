@@ -1,6 +1,72 @@
 @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://www.nerdfonts.com/assets/css/webfont.css');
+/* Lined-paper background across the entire site */
+:root {
+  --paper-bg: #fffef6;
+  --line-color: #e6efff;     /* horizontal lines */
+  --line-gap: 30px;           /* spacing between lines */
+  --margin-line: rgba(255,0,0,.18);
+  --margin-offset: 56px;      /* horizontal position of red margin */
+}
+
+/* Defaults if not already defined */
+:root{
+  --line-gap: 30px; /* distance between lines */
+}
+
+html, body { height: 100%; }
+
+body {
+  background:
+    /* red margin line */
+    linear-gradient(
+      to right,
+      transparent calc(var(--margin-offset) - 1px),
+      var(--margin-line) calc(var(--margin-offset) - 1px),
+      var(--margin-line) calc(var(--margin-offset) + 1px),
+      transparent calc(var(--margin-offset) + 1px)
+    ),
+    /* ruled lines */
+    repeating-linear-gradient(
+      to bottom,
+      var(--paper-bg) 0,
+      var(--paper-bg) calc(var(--line-gap) - 1px),
+      var(--line-color) calc(var(--line-gap) - 1px),
+      var(--line-color) var(--line-gap)
+    );
+  background-attachment: fixed, fixed;
+  background-color: var(--paper-bg);
+}
+
+/* Make rows/controls align to the line height */
+.ruled-row{
+  min-height: var(--line-gap);
+  display: flex;
+  align-items: center;
+}
+
+/* Make panels transparent so the paper shows through */
+.panel {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+/* Optional: subtle card feel for headings */
+.notepad-title {
+  margin: 0 0 1rem;
+  font-weight: 700;
+  color: #4a5568;
+}
+
+/* Keep sticky notes grid */
+.sticky-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 8px 4px 16px;
+}
 
 h1 {
     font-family: 'Kanit', sans-serif;
@@ -40,4 +106,193 @@ body {
 
 #add-task-btn {
     margin-top: 31px;
+}
+
+/* Notepad container */
+.notepad {
+  position: relative;
+  background:
+    linear-gradient(to right, transparent 48px, rgba(255,0,0,0.25) 49px, rgba(255,0,0,0.25) 50px, transparent 50px),
+    repeating-linear-gradient(to bottom, #fff 0, #fff 28px, #e6efff 29px, #e6efff 30px);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08), 0 1px 0 rgba(0,0,0,0.03);
+  padding: 24px 16px 16px 64px; /* left space for margin line */
+  border: 1px solid #e9ecef;
+}
+
+.notepad-title {
+  font-family: 'Kanit', sans-serif;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.notepad-ring {
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  right: 16px;
+  height: 20px;
+  background:
+    radial-gradient(circle at 24px 10px, #bbb 0 7px, transparent 7px) repeat-x;
+  background-size: 56px 20px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Notepad table: header + stripes */
+.notepad-table {
+  --tg-header-bg: #eccf89;  /* darker yellow */
+  --tg-odd-bg:   #fff4a8;   /* lighter stripe */
+  --tg-even-bg:  rgb(233, 222, 151);   /* lightest stripe */
+}
+
+/* Header background (darker than rows) */
+.notepad-table thead th {
+  background-color: var(--tg-header-bg) !important;
+  color: #3d2f00;
+  border-bottom-color: #e1b941;
+}
+
+/* Stripe both odd and even rows */
+.notepad-table.table-striped { 
+  --bs-table-striped-bg: var(--tg-odd-bg);
+  --bs-table-hover-bg: #fff1a1;
+  --bs-table-bg: transparent;
+}
+.notepad-table.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: var(--tg-odd-bg) !important;
+}
+.notepad-table tbody > tr:nth-of-type(even) {
+  background-color: var(--tg-even-bg);
+}
+
+/* Optional: subtle hover */
+.notepad-table.table-hover > tbody > tr:hover {
+  background-color: #fff1a1 !important;
+}
+
+/* Sticky notes board */
+.sticky-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 8px 4px 16px;
+}
+
+.sticky-note {
+  position: relative;
+  padding: 16px 14px 14px;
+  background: linear-gradient(180deg, #fff799 0%, #ffef7a 100%);
+  box-shadow:
+    0 8px 18px rgba(0,0,0,0.12),
+    0 1px 0 rgba(255,255,255,0.6) inset;
+  border-radius: 4px 4px 6px 6px;
+  transform: rotate(-0.8deg);
+}
+.sticky-note:nth-child(2n) { transform: rotate(0.7deg); }
+.sticky-note:nth-child(3n) { transform: rotate(-1.2deg); }
+
+.sticky-note::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 4px 4px 6px 6px;
+  box-shadow: 0 18px 12px -12px rgba(0,0,0,0.25);
+  pointer-events: none;
+}
+
+.pin {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 35% 35%, #e33 0 3px, #b00 3px 7px, #7a0000 7px 8px, transparent 9px);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.note-title {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: #4a4a4a;
+}
+.note-meta {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+.note-actions .btn { margin-right: 6px; }
+
+/* Snap rows/controls to the paper line height */
+.ruled-row {
+  min-height: var(--line-gap);
+  display: flex;
+  align-items: center;
+}
+
+/* For Bootstrap grid rows that should snap */
+.row.ruled-row > [class*="col-"] {
+  display: flex;
+  align-items: center;
+}
+
+/* Titles/headers that sit between lines */
+.ruled-title,
+.notepad-title {
+  margin: 0;
+  min-height: var(--line-gap);
+  line-height: var(--line-gap);
+  display: flex;
+  align-items: center;
+}
+
+/* Labels inside ruled rows: remove default bottom gap */
+.ruled-row .form-label { margin: 0; }
+
+/* Controls sized to fit between the lines */
+.ruled-control {
+  height: calc(var(--line-gap) - 8px) !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+/* Buttons sized to the same band height */
+.ruled-btn {
+  height: calc(var(--line-gap) - 8px);
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Gentle upward nudge to align perfectly to the line */
+.nudge-up-2{
+  transform: translateY(-2px);
+  will-change: transform;
+}
+
+/* Optional: small spacing between items in a ruled row */
+.ruled-gap { gap: 8px; }
+
+/* Header alignment helpers (keep title left, auth right on all sizes) */
+.header-row .title-col { text-align: left; }
+.header-row .auth-col { text-align: right; }
+
+/* Smaller buttons on narrower screens */
+@media (max-width: 1199.98px) {
+  .notepad-table .btn { padding: .25rem .5rem; font-size: .8rem; }
+}
+
+/* Equalize panels only on ≥1200px; stack below */
+@media (min-width: 1200px) {
+  .equalize > [class*="col-"] { display: flex; }
+  .equalize .panel { display: flex; flex-direction: column; width: 100%; }
+  .equalize .panel .notepad-table-wrap,
+  .equalize .panel .table-responsive { flex: 1 1 auto; }
+}
+
+@media (max-width: 575.98px) {
+  /* tighten lines slightly on very small screens */
+  :root { --line-gap: 26px; --margin-offset: 44px; }
 }

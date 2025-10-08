@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-  <h2>Edit Task</h2>
+<div class="container py-3">
+  <h2 class="h4 mb-3">{{ mode|capfirst }} Task</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Save</button>
+    <div class="mt-2">
+      <a href="{% url 'main' %}" class="btn btn-outline-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
   </form>
+</div>
 {% endblock %}

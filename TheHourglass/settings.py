@@ -54,6 +54,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',   # <-- directly after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',         # Required
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -61,7 +62,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',         # Required
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',  
-    'whitenoise.middleware.WhiteNoiseMiddleware',   # <-- directly after SecurityMiddleware
 ]
 
 ROOT_URLCONF = 'TheHourglass.urls'
