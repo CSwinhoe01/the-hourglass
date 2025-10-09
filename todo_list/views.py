@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+from allauth.account.forms import LoginForm, SignupForm  # add
 from django.contrib import messages
 from django.urls import reverse
 from urllib.parse import urlencode
 
 from .models import Task, Category
-from allauth.account.forms import LoginForm, SignupForm  # add
-
 from .forms import TaskForm
 
 def main_page(request):
@@ -107,6 +107,34 @@ def task_complete(request, pk):
     task.status = 'completed'
     task.save()
     messages.success(request, "Task completed")
+    return redirect('main')
+
+@require_POST
+def ajax_login(request):
+    """
+    Validate with AllAuth's LoginForm and return JSON.
+    On success: log the user in and return ok: true.
+    On failure: 400 with a generic error message.
+    """
+    is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+    form = LoginForm(data=request.POST, request=request)
+
+    if form.is_valid():
+        form.login(request)  # AllAuth logs the user in
+        messages.success(request, "Logged in")  # will show once via toasts
+        if is_ajax:
+            return JsonResponse({"ok": True})
+        # Non-AJAX fallback: go back to index, no JSON page
+        return redirect('main')
+
+    # Invalid credentials
+    if is_ajax:
+        return JsonResponse(
+            {"ok": False, "message": "Incorrect password, please try again."},
+            status=400,
+        )
+    # Non-AJAX fallback: show toast on index instead of AllAuth page
+    messages.error(request, "Incorrect password, please try again.")
     return redirect('main')
 
 
