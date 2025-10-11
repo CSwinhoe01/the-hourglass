@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['thehourglass-3224c869b73e.herokuapp.com', 'localhost', '127.0.0.1']
 
@@ -154,9 +154,53 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
+# Production-like local run
+DEBUG = False
+
+# Your local hosts
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://localhost']
+
+# Sites framework (required by allauth)
+SITE_ID = 1
+
+# Static files (WhiteNoise)
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # folder created by collectstatic
+
+# Django 4.2+ STORAGES config for WhiteNoise
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# Security flags for local HTTP (don’t enforce HTTPS locally)
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0
+
+# Minimal logging so you see the real traceback with DEBUG=False
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django": {"handlers": ["console"], "level": "INFO", "propagate": True},
+    },
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
