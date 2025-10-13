@@ -89,15 +89,26 @@ WSGI_APPLICATION = 'TheHourglass.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
+# Load local env vars if present
+env_path = os.path.join(BASE_DIR, "TheHourglass", "env.py")
+if os.path.exists(env_path):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("env", env_path)
+    env = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(env)
 
+# Coerce/trim env var (guards against stray whitespace)
+db_url = (os.environ.get("DATABASE_URL") or "").strip()
+if db_url:
+    os.environ["DATABASE_URL"] = db_url
+
+# Use dj_database_url.config (not parse)
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    "default": dj_database_url.config(
+        env="DATABASE_URL",
+        conn_max_age=600,
+        ssl_require=True,  # Neon requires SSL
+    )
 }
 
 # Password validation
