@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-if os.path.isfile('env.py'):
-    import env
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,11 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG", "0") == "1"
 
-# Allow your app domain + any *.herokuapp.com subdomain
 ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS",
     ".herokuapp.com,thehourglass-3224c869b73e.herokuapp.com,localhost,127.0.0.1"
 ).split(",")
+
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     "CSRF_TRUSTED_ORIGINS",
@@ -63,7 +60,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "TheHourglass.middleware.AllowIframePreview",
 ]
+
+X_FRAME_OPTIONS = "ALLOWALL"
 
 ROOT_URLCONF = 'TheHourglass.urls'
 

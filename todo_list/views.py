@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
-from allauth.account.forms import LoginForm, SignupForm  # add
+from allauth.account.forms import LoginForm, SignupForm  # Ensure this is the correct import and not shadowed elsewhere
 from django.contrib import messages
 from django.urls import reverse
 from urllib.parse import urlencode
@@ -40,13 +40,12 @@ def main_page(request):
         'q': q,
         # AllAuth forms for the modals:
         'login_form': LoginForm(),
-        'signup_form': SignupForm(),
+        'signup_form': SignupForm(), 
     }
 
     return render(request, 'index.html', context)
 
 def task_list(request):
-    # legacy alias -> keep any params and go back to main
     params = request.GET.urlencode()
     url = reverse('main')
     return redirect(f"{url}?{params}" if params else url)
@@ -74,7 +73,6 @@ def task_create(request):
             return redirect('main')
     else:
         form = TaskForm()
-    # If you prefer no separate page, you can swap this render for a redirect.
     return render(request, 'task_form.html', {'form': form, 'mode': 'create'})
 
 @login_required
