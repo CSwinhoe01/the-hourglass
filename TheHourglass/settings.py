@@ -24,20 +24,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG", "0") == "1"
 
-ALLOWED_HOSTS = [
-    "thehourglass-3224c869b73e.herokuapp.com",
-    "localhost",
-    "127.0.0.1",
-]
+# Allow your app domain + any *.herokuapp.com subdomain
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS",
+    ".herokuapp.com,thehourglass-3224c869b73e.herokuapp.com,localhost,127.0.0.1"
+).split(",")
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://thehourglass-3224c869b73e.herokuapp.com",
-    "https://*.herokuapp.com",
-    "http://localhost",
-    "http://127.0.0.1",
-    "https://localhost",
-    "https://127.0.0.1",
-]
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://thehourglass-3224c869b73e.herokuapp.com,https://*.herokuapp.com,https://localhost,https://127.0.0.1"
+).split(",")
 
 
 INSTALLED_APPS = [
