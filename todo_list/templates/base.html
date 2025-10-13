@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Hourglass</title>
+  <title>{% block title %}The Hourglass{% endblock %}</title>
 
   <!-- Bootstrap CSS -->
   <link
@@ -19,9 +19,15 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-  <div class="container">
-    {% block content %}{% endblock %}
-  </div>
+  <header role="banner" aria-label="Site header"></header>
+
+  <main id="main-content" role="main" tabindex="-1" aria-label="Page content">
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site footer"></footer>
 
   <!-- Top-right toast container -->
   <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080"></div>
